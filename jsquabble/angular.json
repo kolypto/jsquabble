@@ -126,6 +126,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "jsquabble"
+    }
+  },
+  "defaultProject": "jsquabble",
+  "cli": {
+    "analytics": "f2ab137d-989b-4559-8b2f-fa9950345e12"
+  }
 }
