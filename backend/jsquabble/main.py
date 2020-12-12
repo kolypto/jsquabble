@@ -6,7 +6,7 @@ import shelve
 import threading
 import typing
 from _weakrefset import WeakSet
-from typing import List
+from typing import List, Optional
 
 import strawberry
 from starlette.applications import Starlette
@@ -30,6 +30,7 @@ class Answer:
     question: int
     name: str
     answer: str
+    score: Optional[int]
 
 
 # Queries
@@ -70,6 +71,12 @@ class Mutation:
         # Put into the queue (where an admin may be listening)
         answer_broadcast(answer)
 
+        return True
+
+    @strawberry.mutation
+    def answer_score(self, question: int, name: str, score: int) -> bool:
+        """ Set a score for an answer """
+        db_set_score(question, name, score)
         return True
 
 
@@ -135,6 +142,15 @@ def db_add_answer(answer: Answer):
             db.setdefault('answers', [])
             db['answers'].append(answer)
             db.sync()
+
+
+def db_set_score(question: int, name: str, score: int):
+    with shelve.open(ANSWERS_DB, 'c', writeback=True) as db:
+        db.setdefault('answers', [])
+        for answer in db['answers']:
+            if answer.question == question and answer.name == name:
+                answer.score = score
+        db.sync()
 
 
 def db_reset():
