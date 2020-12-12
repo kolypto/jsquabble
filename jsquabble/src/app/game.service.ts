@@ -105,6 +105,31 @@ export class GameService {
       map(res => (res as {data: {answer: Answer}}).data.answer)
     ) as Observable<Answer>;
   }
+
+  /** Update the score of an answer
+   */
+  public updateScore(answer: Answer): Observable<boolean> {
+    return this.apollo.mutate({
+      mutation: UPDATE_SCORE,
+      variables: {
+        question: answer.question,
+        name: answer.name,
+        score: answer.score,
+      }
+    }).pipe(
+      map(res => true),
+    );
+  }
+
+  /** Reset all answers on the server
+   */
+  public clearAnswers(): Observable<boolean> {
+    return this.apollo.mutate({
+      mutation: CLEAR_ANSWERS,
+    }).pipe(
+      map(res => true),
+    );
+  }
 }
 
 
@@ -114,12 +139,25 @@ const SUBMIT_ANSWER = gql`
   }
 `;
 
+const UPDATE_SCORE = gql`
+  mutation ($name: String!, $question: Int!, $score: Int!) {
+    answerScore(name:$name question:$question score:$score)
+  }
+`;
+
+const CLEAR_ANSWERS = gql`
+  mutation {
+    clearAnswers
+  }
+`;
+
 const SUBSCRIBE_ANSWERS = gql`
   subscription ($lookback: Boolean!) {
     answer (lookback: $lookback) {
       question
       name
       answer
+      score
     }
   }
 `;

@@ -4,8 +4,9 @@
     <thead>
         <tr>
             <th class="w-5">Question</th>
-            <th class="w-25">Person</th>
+            <th class="w-5">Person</th>
             <th>Answer</th>
+            <th class="w-5">Score</th>
         </tr>
     </thead>
     <tbody>
@@ -13,6 +14,9 @@
             <td>#{{ answer.question }}</td>
             <td>{{ answer.name }}</td>
             <td>{{ answer.answer }}</td>
+            <td><input type="number" [value]="answer.score" (change)="changeScore(answer, $any($event.target).value)" /></td>
         </tr>
     </tbody>
 </table>
+
+<button type="button" class="btn btn-danger" (click)="clearAnswers()">Clear Answers</button>
