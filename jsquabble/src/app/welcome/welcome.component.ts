@@ -34,6 +34,9 @@ export class WelcomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Clear localStorage
+    this.persist.clear();
+
     // Initial parameters may have come from the query parameters
     const state = this.queryParams;
     if (state.backendUrl){

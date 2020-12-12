@@ -1,1 +1,18 @@
 <h1>Game Master Area</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th class="w-5">Question</th>
+            <th class="w-25">Person</th>
+            <th>Answer</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let answer of answers">
+            <td>#{{ answer.question }}</td>
+            <td>{{ answer.name }}</td>
+            <td>{{ answer.answer }}</td>
+        </tr>
+    </tbody>
+</table>

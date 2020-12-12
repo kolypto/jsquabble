@@ -8,7 +8,7 @@ export class ErrorsService {
   constructor(protected toastr: ToastrService) { }
 
   reportCustomError(title: string, message: string){
-    this.toastr.error(title, message);
+    this.toastr.error(message, title);
   }
 
   reportRequestError(message: string){

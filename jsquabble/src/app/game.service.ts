@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core';
-import { HttpLink } from 'apollo-angular/http';
+import { InMemoryCache } from '@apollo/client/core';
+import { WebSocketLink } from '@apollo/client/link/ws';
 import { Apollo, gql } from 'apollo-angular';
-import { from, Observable } from 'rxjs';
+import { HttpLink, HttpLinkHandler } from 'apollo-angular/http';
+import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Answer } from './answer';
 import { PersistentStateService } from './persistent-state.service';
-import { debug } from 'console';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class GameService {
    */
   public currentQuestion: number = 0;
 
-  constructor(persist: PersistentStateService, private apollo: Apollo, protected httpLink: HttpLink) {
+  constructor(persist: PersistentStateService, private apollo: Apollo, private httpLink: HttpLink) {
     const state = persist.loadState();
     if (state){
       this.configure(state.playerName, state.backendUrl);
@@ -41,12 +42,25 @@ export class GameService {
 
     // Re-create the Apollo client
     this.apollo.removeClient();
+    const httpUri = this.backendUrl;
+    const websocketUri = this.backendUrl.replace('http', 'ws');
+
+    // Create: HTTP
     this.apollo.create({
       cache: new InMemoryCache(),
       link: this.httpLink.create({
-        uri: this.backendUrl,
-      })
+        uri: httpUri,
+      }),
     });
+    // Create: websocket
+    this.apollo.create({
+      cache: new InMemoryCache(),
+      link: new WebSocketLink({
+        // Install: $ npm install apollo-link-ws subscriptions-transport-ws --save
+        uri: websocketUri,  // starts with: "ws://" or "wss://"
+        // options: { reconnect: true }
+      }),
+    }, 'ws');
   }
 
   /** Is the game configured and ready to go?
@@ -75,11 +89,37 @@ export class GameService {
       map(res => true),
     );
   }
+
+  /** Listen to new answers (admin feature)
+   */
+  public subscribeNewAnswers(lookback: boolean): Observable<Answer>{
+    if (!this.isConfigured){
+      return throwError(new Error('Client not configured. Have you been to the welcome page?'));
+    }
+
+    return this.apollo.use('ws').subscribe({
+      query: SUBSCRIBE_ANSWERS,
+      variables: { lookback },
+
+    }).pipe(
+      map(res => (res as {data: {answer: Answer}}).data.answer)
+    ) as Observable<Answer>;
+  }
 }
 
 
 const SUBMIT_ANSWER = gql`
   mutation submitAnswer($question: Int! $name: String! $answer: String!) {
     submitAnswer(question: $question name: $name answer: $answer)
+  }
+`;
+
+const SUBSCRIBE_ANSWERS = gql`
+  subscription ($lookback: Boolean!) {
+    answer (lookback: $lookback) {
+      question
+      name
+      answer
+    }
   }
 `;

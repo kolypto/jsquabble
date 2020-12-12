@@ -19,6 +19,10 @@ export class PersistentStateService {
   public loadState(): PersistentState|undefined {
     return this.storage.get('state') as PersistentState|undefined;
   }
+
+  public clear(){
+    this.storage.clear();
+  }
 }
 
 export interface PersistentState {

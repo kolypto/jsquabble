@@ -78,7 +78,7 @@ class Mutation:
 @strawberry.type
 class Subscription:
     @strawberry.subscription
-    async def answers(self, info, lookback: bool = False) -> typing.AsyncGenerator[Answer, None]:
+    async def answer(self, info, lookback: bool = False) -> typing.AsyncGenerator[Answer, None]:
         """ Subscribe to new answers
 
         Args:
