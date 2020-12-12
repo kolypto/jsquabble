@@ -1,0 +1,17 @@
+<nav class="navbar navbar-dark bg-dark mb-4">
+    <a class="navbar-brand" href="#">
+        Question #{{ this.game.currentQuestion }}
+    </a>
+
+    <ul class="navbar-nav ml-auto mr-auto">
+    </ul>
+
+    <div *ngIf="game.isConfigured" class="navbar-text mr-4">
+        {{ game.playerName }}
+    </div>
+
+    <button type="button" class="btn btn-secondary mr-3 button-small" *ngIf="game.currentQuestion > 0"
+        [routerLink]="['answer', game.currentQuestion - 1 ]">&lt;&lt;</button>
+    <button type="button" class="btn btn-primary p-3 button-big"
+        [routerLink]="['answer', game.currentQuestion + 1 ]">Next</button>
+</nav>
