@@ -12,6 +12,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
 import { GraphQLModule } from './graphql.module';
+import { MasterComponent } from './master/master.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { GraphQLModule } from './graphql.module';
     WelcomeComponent,
     AnswerComponent,
     NavbarComponent,
+    MasterComponent,
   ],
   imports: [
     BrowserModule,
