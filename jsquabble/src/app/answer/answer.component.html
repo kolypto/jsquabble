@@ -1,0 +1,16 @@
+<form [formGroup]="answerForm" (ngSubmit)="submit()" *ngIf="!submittedAnswer">
+
+    <div class="form-group">
+        <label for="inputAnswer">Answer</label>
+        <input type="text" formControlName="answer" class="form-control" id="inputAnswer">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Send</button>
+
+</form>
+
+<div class="container" *ngIf="submittedAnswer">
+    <h4>Your answer: {{ submittedAnswer }}</h4>
+
+    <p>Click "next" when the next round is here</p>
+</div>
