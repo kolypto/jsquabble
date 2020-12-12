@@ -30,20 +30,13 @@ class Answer:
     question: int
     name: str
     answer: str
-    score: Optional[int]
+    score: Optional[int] = None
 
 
 # Queries
 
-def resolve_hello():
-    return 'hi there'
-
-
 @strawberry.type
 class Query:
-    # Example
-    hello: str = strawberry.field(resolver=resolve_hello)
-
     @strawberry.field
     def all_answers(self) -> List[Answer]:
         """ Load all answers """
@@ -56,6 +49,7 @@ class Query:
 class Mutation:
     @strawberry.mutation
     def clear_answers(self) -> bool:
+        """ Remove all answers from the database """
         db_reset()
         return True
 
@@ -89,7 +83,7 @@ class Subscription:
         """ Subscribe to new answers
 
         Args:
-            lookback: Load old messages too
+            lookback: Report old messages too; not just the new ones
         """
         # Get a queue to listen to
         queue = answers_add_listener()
@@ -111,12 +105,19 @@ answers_broadcast = WeakSet()
 
 
 def answers_add_listener() -> asyncio.Queue:
+    """ Register a new listener for new answers
+
+    This function creates a Queue and returns it. While you're listening to it, and the object lives,
+    new answers will be added to this queue. As soon as it's garbage-collected, a weakreference
+    dies, and the queue is not used anymore.
+    """
     queue = asyncio.Queue()
     answers_broadcast.add(queue)
     return queue
 
 
 def answer_broadcast(answer: Answer):
+    """ Broadcast a new answer to all available queues """
     for queue in answers_broadcast:
         queue.put_nowait(answer)
 
@@ -127,11 +128,13 @@ _answers_file_lock = threading.Lock()
 
 
 def db_load_answers() -> List[Answer]:
+    """ Load all stored answers from the DB """
     with _answers_file_lock, shelve.open(ANSWERS_DB, 'c') as db:
         return db.get('answers', [])
 
 
 def db_add_answer(answer: Answer):
+    """ Add another answer to the database """
     with _answers_file_lock:
         # Save to the txt file
         with open(ANSWERS_TXT, 'at') as f:
@@ -145,6 +148,7 @@ def db_add_answer(answer: Answer):
 
 
 def db_set_score(question: int, name: str, score: int):
+    """ Change the score of an answer """
     with shelve.open(ANSWERS_DB, 'c', writeback=True) as db:
         db.setdefault('answers', [])
         for answer in db['answers']:
@@ -154,6 +158,10 @@ def db_set_score(question: int, name: str, score: int):
 
 
 def db_reset():
+    """ Remove all answers from the database.
+
+    The textual copy will remain.
+    """
     with _answers_file_lock, shelve.open(ANSWERS_DB, 'c', writeback=True) as db:
         db.clear()
 
