@@ -23,6 +23,5 @@ export class PersistentStateService {
 
 export interface PersistentState {
   playerName: string;
-  googleApiKey: string;
-  googleSpreadsheetId: string;
+  backendUrl: string;
 }

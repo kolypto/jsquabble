@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GameService } from '../game.service';
-import { PersistentState, PersistentStateService } from '../persistent-state.service';
+import { PersistentStateService } from '../persistent-state.service';
 
 @Component({
   selector: 'app-welcome',
@@ -12,8 +12,7 @@ import { PersistentState, PersistentStateService } from '../persistent-state.ser
 export class WelcomeComponent implements OnInit {
   public welcomeForm = new FormGroup({
     playerName: new FormControl(''),
-    googleApiKey: new FormControl(''),
-    googleSpreadsheetId: new FormControl(''),
+    backendUrl: new FormControl(''),
   });
 
   constructor(private router: Router, private route: ActivatedRoute, private game: GameService, private persist: PersistentStateService) { }
@@ -22,7 +21,7 @@ export class WelcomeComponent implements OnInit {
     const values = this.welcomeForm.value;
 
     // Configure the game
-    this.game.configure(values.playerName, values.googleApiKey, values.googleSpreadsheetId);
+    this.game.configure(values.playerName, values.backendUrl);
 
     // Good?
     if (this.game.isConfigured){
@@ -37,18 +36,14 @@ export class WelcomeComponent implements OnInit {
   ngOnInit(): void {
     // Initial parameters may have come from the query parameters
     const state = this.queryParams;
-    if (state.googleApiKey){
-      this.welcomeForm.get('googleApiKey')?.setValue(state.googleApiKey);
-    }
-    if (state.googleSpreadsheetId){
-      this.welcomeForm.get('googleSpreadsheetId')?.setValue(state.googleSpreadsheetId);
+    if (state.backendUrl){
+      this.welcomeForm.get('backendUrl')?.setValue(state.backendUrl);
     }
 
     // Reflect changes back into the URL
     this.welcomeForm.valueChanges.subscribe(value => {
       this.queryParams = {
-        googleApiKey: this.welcomeForm.get('googleApiKey')?.value,
-        googleSpreadsheetId: this.welcomeForm.get('googleSpreadsheetId')?.value,
+        backendUrl: this.welcomeForm.get('backendUrl')?.value,
       };
     });
   }
@@ -57,8 +52,7 @@ export class WelcomeComponent implements OnInit {
    */
   get queryParams(): UrlState {
     return {
-      googleApiKey: this.route.snapshot.queryParams['googleApiKey'],
-      googleSpreadsheetId: this.route.snapshot.queryParams['googleSpreadsheetId'],
+      backendUrl: this.route.snapshot.queryParams['backendUrl'],
     } as UrlState;
   }
 
@@ -73,6 +67,5 @@ export class WelcomeComponent implements OnInit {
 }
 
 interface UrlState {
-  googleApiKey?: string;
-  googleSpreadsheetId?: string;
+  backendUrl?: string;
 }

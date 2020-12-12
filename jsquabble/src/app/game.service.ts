@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { GdocService } from './gdoc.service';
+import { from, Observable, of } from 'rxjs';
 import { PersistentStateService } from './persistent-state.service';
 
 @Injectable({
@@ -12,14 +10,18 @@ export class GameService {
    */
   public playerName?: string;
 
+  /** API URL
+   */
+  public backendUrl?: string;
+
   /** Current question's id
    */
   public currentQuestion: number = 0;
 
-  constructor(protected gdoc: GdocService, persist: PersistentStateService) {
+  constructor(persist: PersistentStateService) {
     const state = persist.loadState();
     if (state){
-      this.configure(state.playerName, state.googleApiKey, state.googleSpreadsheetId);
+      this.configure(state.playerName, state.backendUrl);
     }
   }
 
@@ -28,15 +30,15 @@ export class GameService {
    * @param googleApiKey API key for Google Spreadsheet API
    * @param googleSpreadsheetId Game spreadsheet
    */
-  public configure(playerName: string, googleApiKey: string, googleSpreadsheetId: string){
+  public configure(playerName: string, backendUrl: string){
     this.playerName = playerName;
-    this.gdoc.configure(googleApiKey, googleSpreadsheetId);
+    this.backendUrl = backendUrl;
   }
 
   /** Is the game configured and ready to go?
    */
   get isConfigured(): boolean {
-    return Boolean(this.playerName && this.gdoc.isConfigured);
+    return Boolean(this.playerName && this.backendUrl);
   }
 
   /** Go to a specific question
@@ -48,13 +50,6 @@ export class GameService {
   /** Submit an answer to the current question
    */
   public submitAnswer(answer: string): Observable<boolean>{
-    return this.gdoc.appendSheetRows(
-      `Q${this.currentQuestion}`,
-      [
-        [this.playerName!, answer],
-      ]
-    ).pipe(
-      map(res => true)
-    );
+    return of(true);
   }
 }
