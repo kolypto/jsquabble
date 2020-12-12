@@ -20,6 +20,8 @@ export class AnswerComponent implements OnInit {
 
   constructor(public game: GameService, protected route: ActivatedRoute, protected error: ErrorsService) { }
 
+  /** Submit the answer
+   */
   submit(){
     const values = this.answerForm.value;
     if (values.answer){
@@ -35,9 +37,18 @@ export class AnswerComponent implements OnInit {
     }
   }
 
+  reset(){
+    this.submittedAnswer = undefined;
+    this.answerForm.reset();
+  }
+
   ngOnInit(): void {
     // Listen to URL changes, jump to a question
     this.route.params.subscribe(queryParams => {
+      // Reset
+      this.reset();
+
+      // Advance
       this.game.jumpToQuestion(+queryParams.id);
     });
   }
