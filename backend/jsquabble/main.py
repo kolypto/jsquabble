@@ -1,9 +1,17 @@
+import os
+import threading
+
+import graphene
 from starlette.applications import Starlette
-from starlette.routing import Route
 from starlette.graphql import GraphQLApp
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
-import graphene
+from starlette.routing import Route
+
+# The file to save the answers to
+SAVE_TO = os.getenv('ANSWERS_TXT', './answers.txt')
+
+
 
 # Queries
 
@@ -14,6 +22,9 @@ class RootQuery(graphene.ObjectType):
         return 'hey'
 
 # Mutations
+
+_answers_file_lock = threading.Lock()
+
 
 class SubmitAnswerMutation(graphene.Mutation):
     class Arguments:
@@ -27,8 +38,10 @@ class SubmitAnswerMutation(graphene.Mutation):
 
     @classmethod
     def mutate(cls, root, info: graphene.ResolveInfo, question: int, name: str, answer: str):
-        print(question, name, answer)
-        return True
+        with _answers_file_lock:
+            with open(SAVE_TO, 'at') as f:
+                f.write(f'#{question} "{name}" {answer}\n')
+        return {'ok': True}
 
 
 class RootMutation(graphene.ObjectType):
