@@ -80,8 +80,6 @@ export class GameService {
 
 const SUBMIT_ANSWER = gql`
   mutation submitAnswer($question: Int! $name: String! $answer: String!) {
-    submitAnswer(question: $question name: $name answer: $answer) {
-      ok
-    }
+    submitAnswer(question: $question name: $name answer: $answer)
   }
 `;
