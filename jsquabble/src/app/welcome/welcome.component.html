@@ -1,0 +1,22 @@
+
+    <form [formGroup]="welcomeForm" (ngSubmit)="submit()">
+
+        <div class="form-group">
+            <label for="inputPlayerName">Player name</label>
+            <input type="text" formControlName="playerName" class="form-control" id="inputPlayerName">
+        </div>
+
+        <div class="form-group">
+            <label for="inputGoogleAPIKey">Google API key</label>
+            <input type="text"  formControlName="googleApiKey" class="form-control" id="inputGoogleAPIKey">
+
+        </div>
+
+        <div class="form-group">
+            <label for="inputGoogleSpreadsheetId">Google Spreadsheet Id</label>
+            <input type="text" formControlName="googleSpreadsheetId" class="form-control" id="inputGoogleSpreadsheetId">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Go</button>
+
+    </form>
