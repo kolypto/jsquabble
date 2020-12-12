@@ -34,17 +34,39 @@ class SubmitAnswerMutation(graphene.Mutation):
 class RootMutation(graphene.ObjectType):
     submit_answer = SubmitAnswerMutation.Field()
 
+# Subscriptions
+
+class RootSubscription(graphene.ObjectType):
+    count_seconds = graphene.Float(up_to=graphene.Int())
+
+    @staticmethod
+    async def subscribe_count_seconds(root, info, up_to):
+        # DOES NOT WORK
+        for i in range(up_to):
+            yield 1.0
+
+
+
+
 # GraphQL schema
 
 schema = graphene.Schema(
     query=RootQuery,
     mutation=RootMutation,
+    subscription=RootSubscription
+)
+
+# GraphQL app
+
+graphql_app = GraphQLApp(
+    schema,
+    graphiql=True,
 )
 
 # Starlette app
 
 routes = [
-    Route('/', GraphQLApp(schema))
+    Route('/', graphql_app)
 ]
 
 middleware = [
@@ -56,3 +78,5 @@ app = Starlette(
     routes=routes,
     middleware=middleware,
 )
+
+

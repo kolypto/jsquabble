@@ -9,6 +9,7 @@ license = "MIT"
 python = "^3.9"
 starlette = {extras = ["full"], version = "^0.14.1"}
 uvicorn = "^0.13.1"
+graphene = {version = "^3.0b6", allow-prereleases = true}
 
 [tool.poetry.dev-dependencies]
 
