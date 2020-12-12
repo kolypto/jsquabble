@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "jsquabble"
+version = "0.1.0"
+description = "JSquabble back-end"
+authors = ["Mark Vartanyan <kolypto@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+starlette = {extras = ["full"], version = "^0.14.1"}
+uvicorn = "^0.13.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
