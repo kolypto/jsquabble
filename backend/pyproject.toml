@@ -8,7 +8,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.9"
 strawberry-graphql = "^0.44.2"
-uvicorn = "^0.13.1"
+uvicorn = {extras = ["standard"], version = "^0.13.1"}
 
 [tool.poetry.dev-dependencies]
 
