@@ -26,6 +26,13 @@ Run the back-end:
 $ docker run -p 80:8000 kolypto/jsquabble
 ```
 
+or with SSL:
+
+```
+$ sudo certbot certonly --standalone --preferred-challenges http -d jsquabble.ddns.net
+$ docker run -it --rm -p 443:8000 -v $(realpath cert/):/app/cert kolypto/jsquabble uvicorn jsquabble.main:app --host=0.0.0.0 --ssl-keyfile=cert/privkey.pem --ssl-certfile=cert/cert.pem
+```
+
 # Back-End (manual)
 
 To set up the environment:
