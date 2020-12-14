@@ -41,18 +41,20 @@ export class GameService {
     this.backendUrl = backendUrl;
 
     // Re-create the Apollo client
-    this.apollo.removeClient();
     const httpUri = this.backendUrl;
     const websocketUri = this.backendUrl.replace('http', 'ws');
 
     // Create: HTTP
+    this.apollo.removeClient();
     this.apollo.create({
       cache: new InMemoryCache(),
       link: this.httpLink.create({
         uri: httpUri,
       }),
     });
+
     // Create: websocket
+    this.apollo.removeClient('ws');
     this.apollo.create({
       cache: new InMemoryCache(),
       link: new WebSocketLink({
